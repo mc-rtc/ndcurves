@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+%:
+	dh $@ --parallel
+
+override_dh_auto_configure:
+	dh_auto_configure -- -DINSTALL_DOCUMENTATION:BOOL=OFF -DBUILD_PYTHON_INTERFACE:BOOL=OFF -DBUILD_TESTING:BOOL=OFF
+
+

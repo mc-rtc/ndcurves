@@ -1,0 +1,72 @@
+name: Package ndcurves
+
+# This workflow only runs when pushing to debian
+#
+# It will:
+# - Build packages for selected Debian/Ubuntu distro
+# - Upload the packages to https://cloudsmith.io/~mc-rtc/repos/head/packages/
+# - Upload the packages to https://cloudsmith.io/~mc-rtc/repos/stable/packages/
+#
+
+on:
+  push:
+    branches:
+      - debian
+
+jobs:
+  # This job build binary packages for Ubuntu
+  build-packages:
+    strategy:
+      fail-fast: false
+      matrix:
+        dist: [xenial, bionic, focal]
+        arch: [i386, amd64]
+        exclude:
+          - dist: focal
+            arch: i386
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+    - name: Build package
+      uses: jrl-umi3218/github-actions/build-package-native@master
+      with:
+        dist: ${{ matrix.dist }}
+        arch: ${{ matrix.arch }}
+    - uses: actions/upload-artifact@v1
+      with:
+        name: packages-${{ matrix.dist }}-${{ matrix.arch }}
+        path: /tmp/packages-${{ matrix.dist }}-${{ matrix.arch }}/
+  # This job upload binary packages for Ubuntu
+  upload-packages:
+    needs: build-packages
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        dist: [xenial, bionic, focal]
+        arch: [i386, amd64]
+        exclude:
+          - dist: focal
+            arch: i386
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Download packages
+      uses: actions/download-artifact@v1
+      with:
+        name: packages-${{ matrix.dist }}-${{ matrix.arch }}
+    - name: Upload to multi-contact-head
+      uses: jrl-umi3218/github-actions/upload-package@master
+      with:
+        dist: ubuntu/${{ matrix.dist }}
+        repo: mc-rtc/head
+        path: packages-${{ matrix.dist }}-${{ matrix.arch }}
+        CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
+    - name: Upload to multi-contact-release
+      uses: jrl-umi3218/github-actions/upload-package@master
+      with:
+        dist: ubuntu/${{ matrix.dist }}
+        repo: mc-rtc/stable
+        path: packages-${{ matrix.dist }}-${{ matrix.arch }}
+        CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}

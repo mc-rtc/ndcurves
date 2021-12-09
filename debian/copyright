@@ -1,0 +1,11 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: ndcurves
+Source: https://github.com/loco-3d/ndcurves
+
+Files: *
+Copyright: 2013-2021 CNRS
+License: BSD-3-Clause
+
+Files: debian/*
+Copyright: 2021 Pierre Gergondet <pierre.gergondet+ppa@gmail.com>
+License: GPL-2+

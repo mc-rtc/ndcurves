@@ -1,0 +1,20 @@
+Source: ndcurves
+Priority: optional
+Maintainer: Pierre Gergondet <pierre.gergondet@gmail.com>
+Standards-Version: 3.9.5
+Section: misc
+Homepage: https://github.com/loco-3d/ndcurves
+Vcs-git: https://github.com/loco-3d/ndcurves
+Vcs-Browser: https://github.com/loco-3d/ndcurves
+Build-Depends: debhelper (>= 9),
+               pkg-config,
+               cmake,
+               libboost-serialization-dev,
+               libeigen3-dev
+
+Package: libndcurves-dev
+Architecture: any
+Section: libdevel
+Depends: pkg-config,
+         ${misc:Depends}
+Description: A template-based Library for creating curves of arbitrary order and dimension
